@@ -1,6 +1,7 @@
 Django>=1.9,<1.10
-Markdown
 celery>=3.1,<4.0
+wagtail>=1.9,<1.10
+Markdown
 configobj
 django-annoying
 django-assets
@@ -27,8 +28,6 @@ markdown-newtab
 premailer
 progress
 psycopg2
-python-daemon<1.7
 pytz
-salmon-mail==2
 simplejson
-wagtail>=1.9,<1.10
+git+https://github.com/moggers87/salmon@41387e40d2e363dc2a9110722ba41a842de75eda#egg=salmon
