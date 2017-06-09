@@ -18,7 +18,10 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 import urllib
 
 from django import test

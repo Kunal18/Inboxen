@@ -17,17 +17,20 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 import shutil
 import sys
 
 from django import test
 from django.contrib.auth import get_user_model
 from django.db import DatabaseError
-
 from salmon.mail import MailRequest
 from salmon.server import SMTPError
 from salmon.routing import Router
+import six
 
 from inboxen.utils import override_settings
 from inboxen import models
@@ -69,15 +72,15 @@ Content-Type: text/plain
 Last part!
 
 --inboxenTest--
-"""
+""".encode("utf-8")
 
 BODIES = [
-    "",
-    "Hi,\n\nThis is a plain text message!\n",
-    "",
-    "Last part!\n",
-    "Inside part\n",
-    "Another inside part\n",
+    "".encode("utf-8"),
+    "Hi,\n\nThis is a plain text message!\n".encode("utf-8"),
+    "".encode("utf-8"),
+    "Last part!\n".encode("utf-8"),
+    "Inside part\n".encode("utf-8"),
+    "Another inside part\n".encode("utf-8"),
 ]
 
 
@@ -154,7 +157,7 @@ class RouterTestCase(test.TestCase):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.PartList.objects.count(), 6)
 
-        bodies = [str(part.body.data) for part in models.PartList.objects.select_related("body").order_by("level", "lft")]
+        bodies = [six.binary_type(part.body.data) for part in models.PartList.objects.select_related("body").order_by("level", "lft")]
         self.assertEqual(bodies, BODIES)
 
     @override_settings(ADMINS=(("admin", "root@localhost"),))

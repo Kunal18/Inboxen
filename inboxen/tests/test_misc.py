@@ -18,7 +18,7 @@
 ##
 
 from email.message import Message
-from StringIO import StringIO
+from six import StringIO
 from subprocess import CalledProcessError
 import sys
 
@@ -35,7 +35,10 @@ from django.core.management.base import CommandError
 from django.core.urlresolvers import reverse
 from django.test.client import RequestFactory
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen.management.commands import router, feeder, url_stats
 from inboxen.middleware import (

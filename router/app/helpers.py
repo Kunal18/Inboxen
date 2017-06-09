@@ -24,6 +24,7 @@ import logging
 
 from pytz import utc
 from watson import search
+import six
 
 from inboxen.models import Body, Email, Header, PartList
 
@@ -66,8 +67,8 @@ def make_email(message, inbox):
 
 
 def encode_body(part):
-    """Make certain that the body of a part is bytes and not unicode"""
-    if isinstance(part.body, unicode):
+    """Make certain that the body of a part is bytes and not str"""
+    if isinstance(part.body, six.text_type):
         ctype, params = part.content_encoding['Content-Type']
         try:
             data = part.body.encode(params.get("charset", "ascii"))
@@ -78,6 +79,6 @@ def encode_body(part):
         data = part.body
 
     if not data:
-        data = ''
+        data = b''
 
     return data

@@ -17,7 +17,6 @@
 #    along with Inboxen  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from subprocess import Popen, PIPE
 import datetime
 import os
 import string
@@ -292,16 +291,6 @@ SALMON_SERVER = {"host": "localhost", "port": 8823, "type": "smtp"}
 ##
 # Misc.
 ##
-
-try:
-    process = Popen("git rev-parse HEAD".split(), stdout=PIPE, close_fds=True, cwd=BASE_DIR)
-    output = process.communicate()[0].strip()
-    if not process.returncode:
-        os.environ["INBOXEN_COMMIT_ID"] = output
-    else:
-        os.environ["INBOXEN_COMMIT_ID"] = "UNKNOWN"
-except OSError, TypeError:
-    os.environ["INBOXEN_COMMIT_ID"] = "UNKNOWN"
 
 EMAIL_SUBJECT_PREFIX = "[{}] ".format(SITE_NAME)  # trailing space is important
 

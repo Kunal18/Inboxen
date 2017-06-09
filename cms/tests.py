@@ -25,7 +25,11 @@ from django.core import urlresolvers
 from django.core.exceptions import PermissionDenied
 from wagtail.wagtailadmin import wagtail_hooks as admin_hooks
 from wagtail.wagtailadmin.menu import Menu
-import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from cms.wagtail_hooks import override_user_urls, remove_user_menu_items
 from inboxen.tests import factories, utils

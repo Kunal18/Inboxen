@@ -22,6 +22,7 @@ from django.core import urlresolvers
 
 import factory
 import factory.fuzzy
+import six
 
 from blog import models
 from inboxen.tests import factories
@@ -71,7 +72,7 @@ class BlogTestCase(test.TestCase):
         self.assertEqual(post.subject, SUBJECT)
         self.assertEqual(post.body, BODY)
         self.assertEqual(post.date, None)
-        self.assertEqual(type(post.__unicode__()), unicode)
+        self.assertEqual(type(six.text_type(post)), six.text_type)
 
         url = urlresolvers.reverse('blog-post', kwargs={"slug": post.slug})
 

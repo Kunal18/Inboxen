@@ -72,8 +72,8 @@ def liberate(user_id, options):
 
     # Is this safe enough?
     try:
-        os.mkdir(path, 0700)
-    except (IOError, OSError), error:
+        os.mkdir(path, 0o700)
+    except (IOError, OSError) as error:
         log.info("Couldn't create dir at %s", path)
         raise liberate.retry(exc=error)
 
@@ -173,7 +173,7 @@ def liberate_message(mail_path, inbox, email_id):
         msg = Email.objects.get(id=email_id, flags=~Email.flags.deleted)
         msg = utils.make_message(msg)
         maildir.add(msg.as_string())
-    except Exception, exc:
+    except Exception as exc:
         msg_id = hex(int(email_id))[2:]
         log.warning("Exception processing %s", msg_id, exc_info=exc)
         return msg_id
@@ -225,7 +225,7 @@ def liberate_tarball(result, options):
 
     try:
         tar = tarfile.open(tar_name, tar_type['writer'])
-    except (IOError, OSError), error:
+    except (IOError, OSError) as error:
         log.debug("Couldn't open tarfile at %s", tar_name)
         raise liberate_tarball.retry(exc=error)
 

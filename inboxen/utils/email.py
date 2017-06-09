@@ -32,6 +32,7 @@ from django.utils.translation import ugettext as _
 from lxml import etree, html as lxml_html
 from lxml.html.clean import Cleaner
 from premailer.premailer import Premailer
+import six
 
 from redirect import proxy_url
 
@@ -56,15 +57,19 @@ class InboxenPremailer(Premailer):
 
 def _unicode_damnit(data, charset="utf-8", errors="replace"):
     """Makes doubley sure that we can turn the database's binary typees into
-    unicode objects
+    Unicode objects
     """
-    if isinstance(data, unicode):
+    if isinstance(data, six.text_type):
         return data
 
+    # if it's not already unicode, make sure it's bytes e.g.
+    # postgres sometimes returns a "buffer" type that unicode
+    # can't handle
+    data = six.binary_type(data)
     try:
-        return unicode(str(data), charset, errors)
+        return six.text_type(data, charset, errors)
     except LookupError:
-        return unicode(str(data), "ascii", errors)
+        return six.text_type(data, "ascii", errors)
 
 
 def _clean_html_body(request, email, body, charset):

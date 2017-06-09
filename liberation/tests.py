@@ -18,7 +18,7 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from StringIO import StringIO
+from six import StringIO
 from importlib import import_module
 import base64
 import itertools

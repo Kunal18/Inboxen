@@ -21,6 +21,7 @@ import datetime
 import itertools
 
 from pytz import utc
+import six
 
 from django import test
 from django.conf import settings
@@ -180,7 +181,7 @@ class ModelTestCase(test.TestCase):
         profile.available_inboxes()
         self.assertEqual(models.Request.objects.count(), 1)
 
-        self.assertEqual(type(models.Request.objects.get().__unicode__()), unicode)
+        self.assertEqual(type(six.text_type((models.Request.objects.get()))), six.text_type)
 
 
 class ModelFlagsTestCase(test.TestCase):

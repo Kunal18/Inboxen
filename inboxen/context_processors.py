@@ -17,9 +17,29 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from subprocess import Popen, PIPE
 import os
 
 from django.conf import settings
+
+
+_INBOXEN_COMMIT_ID = None
+
+
+def get_inboxen_commit_id():
+    global _INBOXEN_COMMIT_ID
+
+    if _INBOXEN_COMMIT_ID is None:
+        try:
+            process = Popen("git rev-parse HEAD".split(), stdout=PIPE, close_fds=True, cwd=settings.BASE_DIR)
+            output = process.communicate()[0].strip()
+            if not process.returncode:
+                _INBOXEN_COMMIT_ID = output
+            else:
+                _INBOXEN_COMMIT_ID = "UNKNOWN"
+        except (OSError, TypeError):
+            _INBOXEN_COMMIT_ID = "UNKNOWN"
+    return _INBOXEN_COMMIT_ID
 
 
 def reduced_settings_context(request):
@@ -33,7 +53,7 @@ def reduced_settings_context(request):
     reduced_settings = {
         "SITE_NAME": settings.SITE_NAME,
         "ENABLE_REGISTRATION": settings.ENABLE_REGISTRATION,
-        "INBOXEN_COMMIT_ID": os.environ["INBOXEN_COMMIT_ID"],
+        "INBOXEN_COMMIT_ID": get_inboxen_commit_id(),
         "SOURCE_LINK": settings.SOURCE_LINK,
     }
     return {"settings": reduced_settings}

@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
+from __future__ import unicode_literals
 
 
 BODY = """<html>
@@ -35,7 +36,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p onClick="alert('Idiot!')">Click me!</p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
 METALESS_BODY = """<html>
 <head>
@@ -50,7 +51,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
 CHARSETLESS_BODY = """<html>
 <head>
@@ -66,9 +67,9 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
-BODILESS_BODY = """<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>"""
+BODILESS_BODY = """<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>""".encode("utf-8")
 
 
 # example email that was causing issue #47
@@ -1218,7 +1219,7 @@ i3E4=3D&ea.client.id=3D1422"/>
 ------=_Part_29748709_1445524343.1448020924829--
 
 ------=_Part_29748710_445134290.1448020924829--
-"""
+""".encode("utf-8")
 
 
 EXAMPLE_DIGEST = """Content-Type: multipart/mixed; boundary="===============1488510984=="
@@ -1385,7 +1386,7 @@ CentOS-announce@centos.org
 http://lists.centos.org/mailman/listinfo/centos-announce
 
 --===============1488510984==--
-"""
+""".encode("utf-8")
 
 
 EXAMPLE_ALT = """Return-Path: <newsletter@gog.com>
@@ -1664,7 +1665,7 @@ v id=3D"_t"></div>
 
 --_=_swift_v4_144744021656462f582810e_=_--
 
-"""
+""".encode("utf-8")
 
 
 EXAMPLE_SIGNED_FORWARDED_DIGEST = """Message-ID: <1448059000.4758.0.camel@example.com>
@@ -2144,4 +2145,4 @@ s+PN63nlOtiyy8KEqWnI
 
 --=-8OGUbXGGezXx/m8jI4KD--
 
-"""
+""".encode("utf-8")

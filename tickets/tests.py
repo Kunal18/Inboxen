@@ -17,7 +17,10 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from django import test
 from django.core import mail, urlresolvers
@@ -26,6 +29,7 @@ from django.db.models import Max
 from wagtail.wagtailcore.models import Site
 import factory
 import factory.fuzzy
+import six
 
 from cms.models import AppPage, HelpIndex
 from cms.utils import app_reverse
@@ -253,12 +257,12 @@ class QuestionModelTestCase(test.TestCase):
         question_qs = models.Question.objects.annotate(last_response_date=Max("response__date"))
         self.assertEqual(question_qs[0].last_activity, response.date)
 
-    def test_unicode(self):
+    def test_magic_str(self):
         question = QuestionFactory(author=self.user)
-        self.assertEqual(type(question.__unicode__()), unicode)
+        self.assertEqual(type(six.text_type(question)), six.text_type)
 
         response = ResponseFactory(question=question, author=self.user)
-        self.assertEqual(type(response.__unicode__()), unicode)
+        self.assertEqual(type(six.text_type(response)), six.text_type)
 
 
 class RenderBodyTestCase(test.TestCase):
@@ -293,8 +297,8 @@ class RenderBodyTestCase(test.TestCase):
 class RenderStatus(test.TestCase):
     def test_render(self):
         result = tickets_flags.render_status(models.Question.NEW)
-        self.assertIn(unicode(tickets_flags.STATUSES[models.Question.NEW]), result)
-        self.assertIn(unicode(tickets_flags.STATUS_TO_TAGS[models.Question.NEW]["class"]), result)
+        self.assertIn(six.text_type(tickets_flags.STATUSES[models.Question.NEW]), result)
+        self.assertIn(six.text_type(tickets_flags.STATUS_TO_TAGS[models.Question.NEW]["class"]), result)
 
         self.assertNotEqual(tickets_flags.render_status(models.Question.RESOLVED), result)
 

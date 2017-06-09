@@ -26,6 +26,7 @@ from django.views import generic
 
 from braces.views import LoginRequiredMixin
 from watson import search
+import six
 
 from inboxen import models
 from inboxen.utils.email import find_bodies
@@ -128,7 +129,7 @@ class EmailView(LoginRequiredMixin, generic.DetailView):
         find_bodies(self.request, email_dict, attachments[:1])
 
         for body in email_dict["bodies"]:
-            assert isinstance(body, unicode), "body is %r" % type(body)
+            assert isinstance(body, six.text_type), "body is %r" % type(body)
 
         context = super(EmailView, self).get_context_data(**kwargs)
         context.update({
