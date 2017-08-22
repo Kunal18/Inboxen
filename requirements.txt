@@ -9,7 +9,7 @@ django-bitfield>=1.9.2
 django-bootstrap-form
 django-braces
 django-celery
-django-csp>3.0
+git+https://github.com/mozilla/django-csp.git@5aebe75a185f768f82dede4b485fc60dd696e1a9
 django-extensions
 django-formtools
 django-mptt

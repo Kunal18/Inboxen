@@ -153,6 +153,7 @@ TEMPLATES = [{
             "django.template.context_processors.request",
             "django.template.context_processors.csrf",
             "django.contrib.messages.context_processors.messages",
+            "csp.context_processors.nonce",
             "inboxen.context_processors.reduced_settings_context"
         ],
         'loaders': [
@@ -259,8 +260,9 @@ X_FRAME_OPTIONS = "DENY"
 # CSP settings
 CSP_REPORT_ONLY = False
 CSP_REPORT_URI = urlresolvers.reverse_lazy("csp_logger")
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_INCLUDE_NONCE_IN = ('script-src',)
 
+CSP_DEFAULT_SRC = ("'none'",)
 CSP_CONNECT_SRC = ("'self'",)
 CSP_FONT_SRC = ("'self'",)
 CSP_IMG_SRC = ("'self'",)
