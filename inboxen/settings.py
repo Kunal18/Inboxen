@@ -169,6 +169,7 @@ TEMPLATES = [{
 }]
 
 MIDDLEWARE_CLASSES = (
+    'wagtail.wagtailcore.middleware.RequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',

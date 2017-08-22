@@ -30,4 +30,4 @@ python-daemon<1.7
 pytz
 salmon-mail==2
 simplejson
-wagtail>=1.12,<1.13
+./thirdparty/wagtail-1.12.tar.gz
