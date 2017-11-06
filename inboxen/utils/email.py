@@ -20,6 +20,7 @@
 models.py) for emails
 
 It's in "utils" because "domain.py" would get confusing :P """
+from __future__ import print_function
 
 import re
 import logging
@@ -32,6 +33,7 @@ from django.utils.translation import ugettext as _
 from lxml import etree, html as lxml_html
 from lxml.html.clean import Cleaner
 from premailer.premailer import Premailer
+import six
 
 from redirect import proxy_url
 
@@ -58,13 +60,13 @@ def unicode_damnit(data, charset="utf-8", errors="replace"):
     """Makes doubley sure that we can turn the database's binary typees into
     unicode objects
     """
-    if isinstance(data, unicode):
+    if isinstance(data, six.text_type):
         return data
 
     try:
-        return unicode(str(data), charset, errors)
+        return six.text_type(six.binary_type(data), charset, errors)
     except LookupError:
-        return unicode(str(data), "ascii", errors)
+        return six.text_type(six.binary_type(data), "ascii", errors)
 
 
 def _clean_html_body(request, email, body, charset):
@@ -291,7 +293,7 @@ def print_tree(part, func=lambda x: str(x)):
     argument and returns a string
     """
     indent = "\t" * part.get_level()
-    print "{}{}".format(indent, func(part))
+    print("{}{}".format(indent, func(part)))
 
     for child in part.get_children():
         print_tree(child, func)

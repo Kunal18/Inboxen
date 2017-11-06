@@ -17,15 +17,18 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
+from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import models
 from django.utils import safestring
+from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.fields import AutoSlugField
 import markdown
 
 
+@python_2_unicode_compatible
 class BlogPost(models.Model):
     """Basic blog post, body stored as MarkDown"""
     subject = models.CharField(max_length=512)
@@ -42,19 +45,19 @@ class BlogPost(models.Model):
         """Render MarkDown to HTML"""
         return safestring.mark_safe(markdown.markdown(self.body))
 
-    def __unicode__(self):
+    def __str__(self):
         draft = ""
         if self.draft:
-            draft = u" (draft)"
+            draft = " (draft)"
 
         if not self.subject:
-            subject = u"(untitled)"
+            subject = "(untitled)"
         elif len(self.subject) > 64:
-            subject = u"%s…" % self.subject[:63]
+            subject = "%s…" % self.subject[:63]
         else:
             subject = self.subject
 
-        return u"%s%s" % (subject, draft)
+        return "%s%s" % (subject, draft)
 
     class Meta:
         ordering = ["-date"]

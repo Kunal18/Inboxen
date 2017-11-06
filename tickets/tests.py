@@ -16,15 +16,19 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
-
-import mock
+from __future__ import unicode_literals
 
 from django import test
 from django.core import mail, urlresolvers
 from django.db.models import Max
-
 import factory
 import factory.fuzzy
+import six
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from cms.models import AppPage, HelpIndex
 from cms.utils import app_reverse
@@ -84,9 +88,9 @@ class QuestionViewTestCase(test.TestCase):
         response = self.client.get(self.get_url())
         self.assertEqual(response.status_code, 200)
 
-        self.assertIn("More Questions", response.content)
+        self.assertIn("More Questions", response.content.decode("utf-8"))
         list_url = app_reverse(self.page, "tickets-list", kwargs={"status": "open"})
-        self.assertIn(list_url, response.content)
+        self.assertIn(list_url, response.content.decode("utf-8"))
 
     def test_switch_open_closed(self):
         models.Question.objects.filter(status=models.Question.NEW).update(author=self.other_user)
@@ -95,9 +99,9 @@ class QuestionViewTestCase(test.TestCase):
         response = self.client.get(self.get_url())
         self.assertEqual(response.status_code, 200)
 
-        self.assertIn("More Questions", response.content)
+        self.assertIn("More Questions", response.content.decode("utf-8"))
         list_url = app_reverse(self.page, "tickets-list", kwargs={"status": "closed"})
-        self.assertIn(list_url, response.content)
+        self.assertIn(list_url, response.content.decode("utf-8"))
 
     def test_post_form_valid(self):
         params = {"subject": "Hello!", "body": "This is the body of my question"}
@@ -155,7 +159,7 @@ class QuestionDetailTestCase(test.TestCase):
     def test_get(self):
         response = self.client.get(self.get_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn(self.question.render_body(), response.content)
+        self.assertIn(self.question.render_body(), response.content.decode("utf-8"))
 
     def test_post_form_valid(self):
         response = self.client.post(self.get_url(), {"body": "hello"})
@@ -167,7 +171,7 @@ class QuestionDetailTestCase(test.TestCase):
         self.assertEqual(responses[0].body, "hello")
 
         response = self.client.get(self.get_url())
-        self.assertIn(responses[0].render_body(), response.content)
+        self.assertIn(responses[0].render_body(), response.content.decode("utf-8"))
 
     def test_post_form_invalid(self):
         response_count = models.Response.objects.all().count()
@@ -248,12 +252,16 @@ class QuestionModelTestCase(test.TestCase):
         question_qs = models.Question.objects.annotate(last_response_date=Max("response__date"))
         self.assertEqual(question_qs[0].last_activity, response.date)
 
-    def test_unicode(self):
+    def test_str(self):
         question = QuestionFactory(author=self.user)
-        self.assertEqual(type(question.__unicode__()), unicode)
-
         response = ResponseFactory(question=question, author=self.user)
-        self.assertEqual(type(response.__unicode__()), unicode)
+
+        self.assertEqual(type(question.__str__()), str)
+        self.assertEqual(type(response.__str__()), str)
+
+        if six.PY2:
+            self.assertEqual(type(question.__unicode__()), unicode)
+            self.assertEqual(type(response.__unicode__()), unicode)
 
 
 class RenderBodyTestCase(test.TestCase):
@@ -288,7 +296,7 @@ class RenderBodyTestCase(test.TestCase):
 class RenderStatus(test.TestCase):
     def test_render(self):
         result = tickets_flags.render_status(models.Question.NEW)
-        self.assertIn(unicode(tickets_flags.STATUSES[models.Question.NEW]), result)
-        self.assertIn(unicode(tickets_flags.STATUS_TO_TAGS[models.Question.NEW]["class"]), result)
+        self.assertIn(six.text_type(tickets_flags.STATUSES[models.Question.NEW]), result)
+        self.assertIn(six.text_type(tickets_flags.STATUS_TO_TAGS[models.Question.NEW]["class"]), result)
 
         self.assertNotEqual(tickets_flags.render_status(models.Question.RESOLVED), result)

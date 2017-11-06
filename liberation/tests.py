@@ -18,8 +18,8 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from StringIO import StringIO
 from importlib import import_module
+from io import BytesIO
 import base64
 import itertools
 import mailbox
@@ -203,7 +203,7 @@ class LiberationDownloadViewTestCase(test.TestCase):
 
             response = self.client.get(reverse("user-liberate-get"))
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.content, "")
+            self.assertEqual(response.content, b"")
             self.assertEqual(response["Content-Type"], "application/x-gzip")
             self.assertEqual(response["Content-Disposition"], 'attachment; filename="liberated_data.tar.gz"')
             self.assertEqual(response["X-Sendfile"], os.path.join(self.tmp_dir, "test.txt"))
@@ -339,9 +339,9 @@ def check_quopri(msg, data):
 def check_uu(msg, data):
     assert msg._payload != data, "Payload has not been transformed"
 
-    outfile = StringIO()
+    outfile = BytesIO()
     try:
-        uu.decode(StringIO(msg._payload), outfile)
+        uu.decode(BytesIO(msg._payload), outfile)
         payload = outfile.getvalue()
     except uu.Error:
         assert False, "Payload could not be decoded"

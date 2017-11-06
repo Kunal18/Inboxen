@@ -21,7 +21,10 @@
 from django import test
 from django.template import Template, Context
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from account.templatetags import inboxen_account
 

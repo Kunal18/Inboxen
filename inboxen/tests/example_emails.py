@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
+from __future__ import unicode_literals
 
 
 BODY = """<html>
@@ -35,7 +36,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p onClick="alert('Idiot!')">Click me!</p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
 METALESS_BODY = """<html>
 <head>
@@ -50,9 +51,9 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
-CHARSETLESS_BODY = """<html>
+CHARSETLESS_BODY = b"""<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
 <style type="text/css">
@@ -68,7 +69,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 </html>
 """
 
-BADLY_ENCODED_BODY = """<html>
+BADLY_ENCODED_BODY = b"""<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
@@ -100,11 +101,11 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p onClick="alert('Idiot!')">Click me!</p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
-BODILESS_BODY = """<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>"""
+BODILESS_BODY = b"""<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>"""
 
-EXAMPLE_PREMIME_EMAIL = """From: test@example.com
+EXAMPLE_PREMIME_EMAIL = b"""From: test@example.com
 To: test@example.com
 Subject: My Subject
 
@@ -116,7 +117,7 @@ Thanks,
 Test
 """
 
-UNSUPPORTED_CSS_BODY = """<html>
+UNSUPPORTED_CSS_BODY = b"""<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
 <style type="text/css">
@@ -134,7 +135,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 """
 
 # example email that was causing issue #47
-EXAMPLE_PREMAILER_BROKEN_CSS = """Return-Path: <bounces@server8839.e-activist.com>
+EXAMPLE_PREMAILER_BROKEN_CSS = b"""Return-Path: <bounces@server8839.e-activist.com>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; s=key1;
  d=server8839.e-activist.com;
  h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type;
@@ -1282,7 +1283,7 @@ i3E4=3D&ea.client.id=3D1422"/>
 ------=_Part_29748710_445134290.1448020924829--
 """
 
-EXAMPLE_ALT = """Return-Path: <newsletter@gog.com>
+EXAMPLE_ALT = b"""Return-Path: <newsletter@gog.com>
 Delivered-To: <moggers87@thewarof1812.moggers.co.uk>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gog.com; s=klucz;
  t=1447440216; bh=l0Buq2T4lA4iqsJXfCC7G7rWIFHCulVCxCZqR2SZ+fM=;
@@ -1560,7 +1561,7 @@ v id=3D"_t"></div>
 
 """
 
-EXAMPLE_DIGEST = """Delivered-To: example@example.com
+EXAMPLE_DIGEST = b"""Delivered-To: example@example.com
 Received: by 10.227.0.129 with SMTP id 1csp102594wbb;
         Fri, 14 Feb 2014 04:01:13 -0800 (PST)
 X-Received: by 10.229.171.8 with SMTP id f8mr12089678qcz.13.1392379272257;
@@ -1962,7 +1963,7 @@ http://lists.centos.org/mailman/listinfo/centos-announce
 """
 
 # same as EXAMPLE_DIGEST, except its been forwarded as a message/rfc822
-EXAMPLE_SIGNED_FORWARDED_DIGEST = """Message-ID: <1448059000.4758.0.camel@example.com>
+EXAMPLE_SIGNED_FORWARDED_DIGEST = b"""Message-ID: <1448059000.4758.0.camel@example.com>
 Subject: [Fwd: CentOS-announce Digest, Vol 108, Issue 9]
 From: Matt Molyneaux <example@example.com>
 To: Matt Molyneaux <example@example.com>
@@ -2442,7 +2443,7 @@ s+PN63nlOtiyy8KEqWnI
 """
 
 
-LONELY_ANCHOR_TAG = """<a href="https://example.com">"""
+LONELY_ANCHOR_TAG = b"""<a href="https://example.com">"""
 
 
-EMPTY_ANCHOR_TAG = """<a href="https://example.com"></a>"""
+EMPTY_ANCHOR_TAG = b"""<a href="https://example.com"></a>"""

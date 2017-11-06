@@ -17,12 +17,14 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from StringIO import StringIO
 from email.header import Header
 from email.message import Message
+from io import BytesIO
 import base64
 import quopri
 import uu
+
+import six
 
 from inboxen.models import HEADER_PARAMS
 
@@ -49,7 +51,7 @@ def set_quopri_payload(msg, data):
 
 def set_uuencode_payload(msg, data):
     """Encodees the payload with uuencode"""
-    outfile = StringIO()
+    outfile = BytesIO()
 
     ct = msg.get("Content-Type", "")
     cd = msg.get("Content-Disposition", "")
@@ -59,7 +61,7 @@ def set_uuencode_payload(msg, data):
 
     name = params.get("filename") or params.get("name")
 
-    uu.encode(StringIO(data), outfile, name=name)
+    uu.encode(BytesIO(data), outfile, name=name)
     enc_data = outfile.getvalue()
     msg.set_payload(enc_data)
 
@@ -87,11 +89,16 @@ def make_message(message):
 
         header_set = part.header_set.order_by("ordinal").select_related("name", "data")
         for header in header_set:
-            msg[header.name.name] = Header(header.data.data, "utf-8").encode()
+            # Deal with Python 2/3 differences
+            if six.PY3:
+                encoded_header = Header(header.data.data).encode()
+            else:
+                encoded_header = Header(header.data.data, "utf-8").encode()
+            msg[header.name.name] = encoded_header
 
         if part.is_leaf_node():
             cte = msg.get("Content-Transfer-Encoding", "7-bit")
-            data = str(part.body.data)
+            data = six.binary_type(part.body.data)
 
             if cte == "base64":
                 set_base64_payload(msg, data)

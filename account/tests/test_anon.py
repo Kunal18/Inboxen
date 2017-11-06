@@ -20,7 +20,10 @@
 from django import test
 from django.core.urlresolvers import reverse
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from account import decorators
 from inboxen.tests import factories, utils

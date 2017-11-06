@@ -23,7 +23,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
 from django.forms import ValidationError
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from cms import models, forms
 from cms.tests import factories
@@ -96,7 +99,7 @@ class GetPageFormTestCase(test.TestCase):
 
         self.assertEqual(form._meta.model, models.HelpPage)
         self.assertEqual(form.model_ct, model_ct)
-        self.assertEqual(form.base_fields.keys(), [i for i in models.HelpPage.admin_fields])
+        self.assertEqual([i for i in form.base_fields.keys()], [i for i in models.HelpPage.admin_fields])
 
     def test_invalid_model(self):
         model_ct = ContentType.objects.get_for_model(models.HelpBasePage)

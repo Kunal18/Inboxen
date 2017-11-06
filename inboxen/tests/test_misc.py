@@ -17,8 +17,8 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from StringIO import StringIO
 from email.message import Message
+from io import BytesIO
 from subprocess import CalledProcessError
 import sys
 
@@ -34,7 +34,10 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.client import RequestFactory
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen.management.commands import router, feeder, url_stats
 from inboxen.middleware import ExtendSessionMiddleware
@@ -73,7 +76,7 @@ class LoginTestCase(test.TestCase):
         self.assertEqual(login, True)
 
         response = self.client.get(dj_settings.LOGOUT_URL, follow=True)
-        self.assertIn("You are now logged out. Have a nice day!", response.content)
+        self.assertIn(b"You are now logged out. Have a nice day!", response.content)
 
     def test_last_login(self):
         login = self.client.login(username=self.user.username, password="123456", request=utils.MockRequest(self.user))
@@ -133,12 +136,12 @@ class IndexTestCase(test.TestCase):
     def test_index_page(self):
         response = self.client.get(urlresolvers.reverse("index"))
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Join", response.content)
+        self.assertIn(b"Join", response.content)
 
         with override_settings(ENABLE_REGISTRATION=False):
             response = self.client.get(urlresolvers.reverse("index"))
             self.assertEqual(response.status_code, 200)
-            self.assertNotIn("Join", response.content)
+            self.assertNotIn(b"Join", response.content)
 
     def test_index_page_logged_in(self):
         user = factories.UserFactory()
@@ -146,12 +149,12 @@ class IndexTestCase(test.TestCase):
 
         response = self.client.get(urlresolvers.reverse("index"))
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Join", response.content)
+        self.assertNotIn(b"Join", response.content)
 
         with override_settings(ENABLE_REGISTRATION=False):
             response = self.client.get(urlresolvers.reverse("index"))
             self.assertEqual(response.status_code, 200)
-            self.assertNotIn("Join", response.content)
+            self.assertNotIn(b"Join", response.content)
 
 
 class ExtendSessionMiddlewareTestCase(test.TestCase):
@@ -324,17 +327,18 @@ class UrlStatsCommandTest(test.TestCase):
             # too few args
             call_command("url_stats")
 
-        stdin = StringIO()
-        stdin.write("/\n/\n")
+        stdin = BytesIO()
+        stdin.write("/\n/\n".encode())
         stdin.seek(0)
-        stdout = StringIO()
+        stdout = BytesIO()
 
         old_in = sys.stdin
         old_out = sys.stdout
-        sys.stdin = stdin
-        sys.stdout = stdout
 
         try:
+            sys.stdin = stdin
+            sys.stdout = stdout
+
             call_command("url_stats", "-")
         finally:
             sys.stdin = old_in
@@ -345,13 +349,13 @@ class UrlStatsCommandTest(test.TestCase):
     def test_count_urls(self):
         mgmt_command = url_stats.Command()
 
-        url_list = StringIO()
-        url_list.write("%s\n" % urlresolvers.reverse("single-inbox", kwargs={"inbox": "123", "domain": "example.com"}))
-        url_list.write("%s\n" % urlresolvers.reverse("single-inbox", kwargs={"inbox": "321", "domain": "example.com"}))
-        url_list.write("%s\n" % urlresolvers.reverse("unified-inbox"))
-        url_list.write("/dfsdfsdf/sdfsdss/111\n")
-        url_list.write("%s\n" % urlresolvers.reverse("unified-inbox"))
-        url_list.write("%s\n" % urlresolvers.reverse("unified-inbox"))
+        url_list = BytesIO()
+        url_list.write("{}\n".format(urlresolvers.reverse("single-inbox", kwargs={"inbox": "123", "domain": "example.com"})).encode())
+        url_list.write("{}\n".format(urlresolvers.reverse("single-inbox", kwargs={"inbox": "321", "domain": "example.com"})).encode())
+        url_list.write("{}\n".format(urlresolvers.reverse("unified-inbox")).encode())
+        url_list.write("/dfsdfsdf/sdfsdss/111\n".encode())
+        url_list.write("{}\n".format(urlresolvers.reverse("unified-inbox")).encode())
+        url_list.write("{}\n".format(urlresolvers.reverse("unified-inbox")).encode())
         url_list.seek(0)
 
         urls, non_matches = mgmt_command.count_urls(url_list)
@@ -379,7 +383,7 @@ class RouterCommandTest(test.TestCase):
             mgmt_command.handle(cmd=func)
         self.assertEqual(error.exception.message, "OSError from subprocess, salmon is probably not in your path.")
 
-        mgmt_command.stdout = StringIO()
+        mgmt_command.stdout = BytesIO()
         mgmt_command.handle(cmd=lambda: "test")
         self.assertEqual(mgmt_command.stdout.getvalue(), "test")
 
@@ -419,9 +423,9 @@ class ErrorViewTestCase(test.TestCase):
         response = view_func(request)
 
         self.assertEqual(response.status_code, 499)
-        self.assertIn("some message or other", response.content)
-        self.assertIn("some headline", response.content)
-        self.assertIn("some-css-class", response.content)
+        self.assertIn(b"some message or other", response.content)
+        self.assertIn(b"some headline", response.content)
+        self.assertIn(b"some-css-class", response.content)
 
     def test_misconfigured(self):
         view_obj = ErrorView()

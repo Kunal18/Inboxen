@@ -17,12 +17,17 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
+from __future__ import unicode_literals
 
-import mock
 import urllib
 
 from django import test
 from django.core import urlresolvers, cache
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen.tests import factories, utils
 
@@ -35,7 +40,7 @@ class SearchViewTestCase(test.TestCase):
         login = self.client.login(username=self.user.username, password="123456", request=utils.MockRequest(self.user))
 
         self.url = urlresolvers.reverse("user-search", kwargs={"q": "cheddär"})
-        key = "%s-cheddär" % self.user.id
+        key = "{}-cheddär".format(self.user.id).encode("utf-8")
         self.key = urllib.quote(key)
 
         if not login:
@@ -50,7 +55,7 @@ class SearchViewTestCase(test.TestCase):
     def test_content(self):
         cache.cache.set(self.key, {"emails": [], "inboxes": []})
         response = self.client.get(self.url)
-        self.assertIn(u"There are no Inboxes or emails containing <em>cheddär</em>", response.content.decode("utf-8"))
+        self.assertIn("There are no Inboxes or emails containing <em>cheddär</em>", response.content.decode("utf-8"))
 
         # this is bad, we shouldn't do this
         # TODO test the template directly

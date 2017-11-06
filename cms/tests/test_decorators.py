@@ -24,7 +24,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.test.client import RequestFactory
-import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from cms.decorators import is_secure_admin
 from inboxen.tests.factories import UserFactory

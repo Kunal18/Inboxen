@@ -16,7 +16,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
-
+from __future__ import unicode_literals
 import datetime
 
 from django.contrib.auth import get_user_model
@@ -109,7 +109,7 @@ class FullEmailFactory(EmailFactory):
     def _create(cls, model_class, *args, **kwargs):
         with search.update_index():
             email = super(FullEmailFactory, cls)._create(model_class, *args, **kwargs)
-            body = BodyFactory(data="This mail body is searchable")
+            body = BodyFactory(data=b"This mail body is searchable")
             part = PartListFactory(email=email, body=body)
             HeaderFactory(part=part, name="From")
             HeaderFactory(part=part, name="Subject")

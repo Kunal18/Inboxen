@@ -22,6 +22,7 @@ from django.utils import safestring
 from django.utils.functional import cached_property
 from lxml.html.clean import Cleaner
 import markdown
+import six
 
 from cms.widgets import RichTextInput
 
@@ -31,7 +32,7 @@ DEFAULT_ALLOW_TAGS = ["p", "a", "i", "b", "em", "strong", "ol", "ul", "li", "pre
 DEFAULT_SAFE_ATTRS = ["href"]
 
 
-class HTML(unicode):
+class HTML(six.text_type):
     # Unicode subclass so that it looks like a normal unicode object to the
     # rest of Django, but still has a nice render method. Avoids having to
     # write masses of conversion methods to make sure the database gets an

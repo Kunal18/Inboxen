@@ -22,9 +22,12 @@ from datetime import datetime, timedelta
 from django import test
 from django.core import mail
 from django.contrib.sessions.models import Session
-
 from pytz import utc
-import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen import models, tasks
 from inboxen.tests import factories

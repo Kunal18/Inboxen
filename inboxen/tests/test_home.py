@@ -17,11 +17,14 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import mock
-
 from django import test
 from django.conf import settings as dj_settings
 from django.core import urlresolvers
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen import models
 from inboxen.tests import factories, utils

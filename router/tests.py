@@ -17,17 +17,20 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import mock
 import shutil
 import sys
 
 from django import test
 from django.contrib.auth import get_user_model
 from django.db import DatabaseError
-
 from salmon.mail import MailRequest
 from salmon.server import SMTPError
 from salmon.routing import Router
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 from inboxen.utils import override_settings
 from inboxen import models
