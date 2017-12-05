@@ -10,6 +10,7 @@ django-bootstrap-form
 django-braces
 django-celery
 django-csp>3.0
+django-cursor-pagination
 django-extensions
 django-formtools
 django-mptt
