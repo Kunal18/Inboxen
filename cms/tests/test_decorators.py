@@ -41,13 +41,13 @@ class IsSecureAdminTestCase(test.TestCase):
         self.user = UserFactory()
 
     def test_is_secure_admin(self):
-        request = MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = MockRequest(self.user, has_otp=True, has_elevate=True)
         self.user.is_superuser = True
 
         response = test_view(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_no_sudo(self):
+    def test_no_elevate(self):
         request = MockRequest(self.user, has_otp=True)
         self.user.is_superuser = True
 
@@ -55,13 +55,13 @@ class IsSecureAdminTestCase(test.TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_not_admin(self):
-        request = MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = MockRequest(self.user, has_otp=True, has_elevate=True)
 
         with self.assertRaises(PermissionDenied):
             test_view(request)
 
     def test_no_otp(self):
-        request = MockRequest(self.user, has_sudo=True)
+        request = MockRequest(self.user, has_elevate=True)
         self.user.is_superuser = True
 
         with self.assertRaises(PermissionDenied):
@@ -87,7 +87,7 @@ class IsSecureAdminTestCase(test.TestCase):
         def setup_request(request):
             request.user.is_superuser = False
             request.user.is_verified.return_value = False
-            request.is_sudo.return_value = False
+            request.is_elevated.return_value = False
 
         def noop(requset):
             pass
@@ -98,21 +98,21 @@ class IsSecureAdminTestCase(test.TestCase):
         def set_otp(requset):
             request.user.is_verified.return_value = True
 
-        def set_sudo(request):
-            request.is_sudo.return_value = True
+        def set_elevate(request):
+            request.is_elevated.return_value = True
 
         # collect fiunctions and then add them together in all possible combinations
-        funcs = [set_superuser, set_otp, set_sudo]
+        funcs = [set_superuser, set_otp, set_elevate]
         factors = [[f, noop] for f in funcs]
         products = itertools.product(*factors)
 
-        for superuser, otp, sudo in products:
+        for superuser, otp, elevate in products:
             request = mock.Mock()
 
             setup_request(request)
             superuser(request)
             otp(request)
-            sudo(request)
+            elevate(request)
 
             response = None
             exception_raised = False
@@ -121,7 +121,7 @@ class IsSecureAdminTestCase(test.TestCase):
             except PermissionDenied:
                 exception_raised = True
 
-            chosen_funcs = [superuser, otp, sudo]
+            chosen_funcs = [superuser, otp, elevate]
             if chosen_funcs == funcs:
                 # special case where everything went fine
                 self.assertEqual(response.status_code, 200, "Reponse code was not 200: %r" % chosen_funcs)

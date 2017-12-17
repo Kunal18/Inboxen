@@ -66,7 +66,7 @@ class AdminIndexTestCase(test.TestCase):
                 "Could not log in"
 
         utils.grant_otp(self.client, self.user)
-        utils.grant_sudo(self.client)
+        utils.grant_elevate(self.client)
 
         response = self.client.get(reverse("admin:index"))
         self.assertEqual(response.resolver_match.func, views.index)
@@ -79,7 +79,7 @@ class AdminIndexTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_index(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
 
         response = views.index(request)
         self.assertEqual(response.status_code, 200)
@@ -101,7 +101,7 @@ class AdminIndexTestCase(test.TestCase):
 
 
     def test_child_page(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=False).get()
 
         response = views.index(request, page_pk=page.pk)
@@ -114,7 +114,7 @@ class AdminIndexTestCase(test.TestCase):
         self.assertEqual(breadcrumbs, [page.parent, page])
 
     def test_404(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
 
         with self.assertRaises(Http404):
             views.index(request, page_pk="123")
@@ -133,7 +133,7 @@ class ChoosePageTypeTestCase(test.TestCase):
                 "Could not log in"
 
         utils.grant_otp(self.client, self.user)
-        utils.grant_sudo(self.client)
+        utils.grant_elevate(self.client)
 
         parent_pk = models.HelpIndex.objects.get().pk
         response = self.client.get(reverse("admin:choose-page-type", kwargs={"parent_pk": parent_pk}))
@@ -141,7 +141,7 @@ class ChoosePageTypeTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_choose_type_get(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=True).get()
 
         response = views.choose_page_type(request, parent_pk=page.pk)
@@ -154,7 +154,7 @@ class ChoosePageTypeTestCase(test.TestCase):
         self.assertEqual(breadcrumbs, [page])
 
     def test_404(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
 
         with self.assertRaises(Http404):
             views.choose_page_type(request, parent_pk=123)
@@ -173,7 +173,7 @@ class CreatePageTestCase(test.TestCase):
                 "Could not log in"
 
         utils.grant_otp(self.client, self.user)
-        utils.grant_sudo(self.client)
+        utils.grant_elevate(self.client)
 
         parent_pk = models.HelpIndex.objects.get().pk
         response = self.client.get(reverse("admin:create-page", kwargs={"model": "helpindex", "parent_pk": parent_pk}))
@@ -181,14 +181,14 @@ class CreatePageTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_page_get(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
 
         page = models.HelpBasePage.objects.filter(parent__isnull=True).get()
         response = views.create_page(request, "helppage", page.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_create_page_post(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         request.method = "POST"
         request.POST = {"title": "Test Page", "slug": "test-page"}
 
@@ -206,7 +206,7 @@ class CreatePageTestCase(test.TestCase):
         self.assertEqual(new_page.specific_class, models.HelpPage)
 
     def test_404(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=True).get()
 
         with self.assertRaises(Http404):
@@ -232,7 +232,7 @@ class EditPageTestCase(test.TestCase):
                 "Could not log in"
 
         utils.grant_otp(self.client, self.user)
-        utils.grant_sudo(self.client)
+        utils.grant_elevate(self.client)
 
         parent_pk = models.HelpIndex.objects.get().pk
         response = self.client.get(reverse("admin:edit-page", kwargs={"page_pk": parent_pk}))
@@ -240,14 +240,14 @@ class EditPageTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_edit_page_get(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=False).get()
 
         response = views.edit_page(request, page_pk=page.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_edit_page_post(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         request.method = "POST"
         request.POST = {"title": "Test Page", "slug": "test-page"}
         page = models.HelpBasePage.objects.filter(parent__isnull=False).get()
@@ -265,7 +265,7 @@ class EditPageTestCase(test.TestCase):
         self.assertEqual(page.slug, "test-page")
 
     def test_404(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
 
         with self.assertRaises(Http404):
             views.edit_page(request, page_pk="123")
@@ -284,21 +284,21 @@ class DeletePageTestCase(test.TestCase):
                 "Could not log in"
 
         utils.grant_otp(self.client, self.user)
-        utils.grant_sudo(self.client)
+        utils.grant_elevate(self.client)
 
         response = self.client.get(reverse("admin:delete-page", kwargs={"page_pk": 1}))
         self.assertEqual(response.resolver_match.func, views.delete_page)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_page_get(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=False).get()
 
         response = views.delete_page(request, page_pk=page.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_page_post(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         request.method = "POST"
         request.POST = {}
 
@@ -320,7 +320,7 @@ class DeletePageTestCase(test.TestCase):
             page.refresh_from_db()
 
     def test_404(self):
-        request = utils.MockRequest(self.user, has_otp=True, has_sudo=True)
+        request = utils.MockRequest(self.user, has_otp=True, has_elevate=True)
         page = models.HelpBasePage.objects.filter(parent__isnull=False).get()
 
         # page parent can't be deleted yet

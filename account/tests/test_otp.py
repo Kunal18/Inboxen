@@ -35,7 +35,7 @@ class OtpTestCase(test.TestCase):
         if not login:
             raise Exception("Could not log in")
 
-    def test_sudo_required(self):
+    def test_elevate_required(self):
         urls = [
             urlresolvers.reverse("user-twofactor-setup"),
             urlresolvers.reverse("user-twofactor-backup"),

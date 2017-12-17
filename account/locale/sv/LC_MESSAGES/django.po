@@ -165,7 +165,7 @@ msgstr ""
 #: account/templates/account/login.html:21
 #: account/templates/account/twofactor-setup.html:43
 #: account/templates/account/username.html:16
-#: account/templates/sudo/sudo.html:22
+#: account/templates/elevate/elevate.html:22
 msgid "Cancel"
 msgstr ""
 
@@ -444,11 +444,11 @@ msgstr ""
 msgid "Change Username"
 msgstr ""
 
-#: account/templates/sudo/sudo.html:5 account/templates/sudo/sudo.html:21
+#: account/templates/elevate/elevate.html:5 account/templates/elevate/elevate.html:21
 msgid "Confirm password"
 msgstr ""
 
-#: account/templates/sudo/sudo.html:12
+#: account/templates/elevate/elevate.html:12
 msgid ""
 "\n"
 "        Confirm your password to continue\n"

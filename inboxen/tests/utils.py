@@ -25,15 +25,15 @@ from django.http import HttpRequest, HttpResponse
 from django_otp import DEVICE_ID_SESSION_KEY
 from django_otp.middleware import OTPMiddleware
 from django_otp.plugins.otp_static.models import StaticDevice
-from sudo import settings as sudo_settings
-from sudo.middleware import SudoMiddleware
-from sudo.utils import get_random_string
+from elevate import settings as elevate_settings
+from elevate.middleware import ElevateMiddleware
+from elevate.utils import get_random_string
 
 
 class MockRequest(HttpRequest):
     """Mock up a request object"""
 
-    def __init__(self, user=None, session_id="12345678", has_otp=False, has_sudo=False):
+    def __init__(self, user=None, session_id="12345678", has_otp=False, has_elevate=False):
         super(MockRequest, self).__init__()
         self.method = "GET"
 
@@ -47,10 +47,10 @@ class MockRequest(HttpRequest):
         self._messages = SessionStorage(self)
         self.META = {"REMOTE_ADDR": "127.0.0.1"}
 
-        # sudo
-        SudoMiddleware().process_request(self)
-        if has_sudo:
-            grant_sudo(self)
+        # elevate
+        ElevateMiddleware().process_request(self)
+        if has_elevate:
+            grant_elevate(self)
 
         # otp
         if has_otp:
@@ -58,32 +58,32 @@ class MockRequest(HttpRequest):
         OTPMiddleware().process_request(self)
 
 
-# TODO: submit to django-sudo?
-def grant_sudo(client_or_request):
-    """Sets a cookie on the test client or request that django-sudo will use"""
+# TODO: submit to django-elevate?
+def grant_elevate(client_or_request):
+    """Sets a cookie on the test client or request that django-elevate will use"""
     response = HttpResponse()
     token = get_random_string()
 
     response.set_signed_cookie(
-        sudo_settings.COOKIE_NAME, token,
-                salt=sudo_settings.COOKIE_SALT,
-                max_age=sudo_settings.COOKIE_AGE,
+        elevate_settings.COOKIE_NAME, token,
+                salt=elevate_settings.COOKIE_SALT,
+                max_age=elevate_settings.COOKIE_AGE,
                 secure=False,
                 httponly=True,
-                path=sudo_settings.COOKIE_PATH,
-                domain=sudo_settings.COOKIE_DOMAIN,
+                path=elevate_settings.COOKIE_PATH,
+                domain=elevate_settings.COOKIE_DOMAIN,
     )
 
     if hasattr(client_or_request, "cookies"):
-        client_or_request.cookies[sudo_settings.COOKIE_NAME] = response.cookies[sudo_settings.COOKIE_NAME]
+        client_or_request.cookies[elevate_settings.COOKIE_NAME] = response.cookies[elevate_settings.COOKIE_NAME]
     elif hasattr(client_or_request, "COOKIES"):
-        client_or_request.COOKIES[sudo_settings.COOKIE_NAME] = response.cookies[sudo_settings.COOKIE_NAME].value
+        client_or_request.COOKIES[elevate_settings.COOKIE_NAME] = response.cookies[elevate_settings.COOKIE_NAME].value
     else:
         raise TypeError("%r has neither cookies nor COOKIES" % client_or_request)
 
     # client.session is a property that returns new objects
     session = client_or_request.session
-    session[sudo_settings.COOKIE_NAME] = token
+    session[elevate_settings.COOKIE_NAME] = token
     session.save()
 
 
