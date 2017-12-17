@@ -8,6 +8,7 @@
 * Make sure user creation and username change forms use the same validation (#281)
 * Handle attachment name overflow properly (#273)
 * Update log config to include rate limit
+* Move from django-sudo to django-elevate (#282)
 
 ## Releases
 
