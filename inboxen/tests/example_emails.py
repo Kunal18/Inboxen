@@ -18,6 +18,14 @@
 #    along with Inboxen.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from __future__ import unicode_literals
+
+
+LONELY_ANCHOR_TAG = """<a href="https://example.com">"""
+
+
+EMPTY_ANCHOR_TAG = """<a href="https://example.com"></a>"""
+
 
 BODY = """<html>
 <head>
@@ -35,7 +43,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p onClick="alert('Idiot!')">Click me!</p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
 METALESS_BODY = """<html>
 <head>
@@ -50,7 +58,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("ascii")
 
 CHARSETLESS_BODY = """<html>
 <head>
@@ -66,7 +74,7 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("ascii")
 
 BADLY_ENCODED_BODY = """<html>
 <head>
@@ -77,12 +85,12 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 </head>
 <body>
 <p>Hello! This is a test of <img src="http://example.com/coolface.jpg"></p>
-<p>Testi\xa0</p>
+<p>Testi£</p>
 <p>$$$</p><p><a href="http://example.com/?q=thing">link</a></p>
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
-"""
+""".encode("latin1")
 
 BAD_HTTP_EQUIV_BODY = """<html>
 <head>
@@ -100,21 +108,9 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p onClick="alert('Idiot!')">Click me!</p>
 </body>
 </html>
-"""
+""".encode("utf-8")
 
-BODILESS_BODY = """<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>"""
-
-EXAMPLE_PREMIME_EMAIL = """From: test@example.com
-To: test@example.com
-Subject: My Subject
-
-Hi,
-
-How are you?
-
-Thanks,
-Test
-"""
+BODILESS_BODY = """<p>Click the link below to confirm your subscription to Updates of Loathing:</p><br><a href="http://tinyletter.com/asym/confirm?id=uuid">Subscribe me to Updates of Loathing</a>""".encode("ascii")
 
 UNSUPPORTED_CSS_BODY = """<html>
 <head>
@@ -131,7 +127,21 @@ p {color: #ffffff;background:transparent url(<a href="http://cdn-images.mailchim
 <p><a>Ha!</a><img width=10 height=10></p>
 </body>
 </html>
+""".encode("ascii")
+
+
+EXAMPLE_PREMIME_EMAIL = """From: test@example.com
+To: test@example.com
+Subject: My Subject
+
+Hi,
+
+How are you?
+
+Thanks,
+Test
 """
+
 
 # example email that was causing issue #47
 EXAMPLE_PREMAILER_BROKEN_CSS = """Return-Path: <bounces@server8839.e-activist.com>
@@ -2440,9 +2450,3 @@ s+PN63nlOtiyy8KEqWnI
 --=-8OGUbXGGezXx/m8jI4KD--
 
 """
-
-
-LONELY_ANCHOR_TAG = """<a href="https://example.com">"""
-
-
-EMPTY_ANCHOR_TAG = """<a href="https://example.com"></a>"""
